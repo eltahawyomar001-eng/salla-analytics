@@ -19,11 +19,15 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy application code
 COPY . .
 
+# Copy and set permissions for startup script
+COPY start-railway.sh .
+RUN chmod +x start-railway.sh
+
 # Expose Streamlit port
 EXPOSE 8501
 
 # Health check
-HEALTHCHECK CMD curl --fail http://localhost:8501/_stcore/health
+HEALTHCHECK CMD curl --fail http://localhost:${PORT:-8501}/_stcore/health
 
-# Run the application
-ENTRYPOINT ["streamlit", "run", "app/main.py", "--server.port=8501", "--server.address=0.0.0.0"]
+# Run the application using the startup script
+CMD ["./start-railway.sh"]
