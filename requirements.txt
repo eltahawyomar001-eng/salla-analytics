@@ -17,6 +17,7 @@ babel==2.13.1
 
 # Optional: Better performance for large files
 polars==0.19.19
+xlsx2csv==0.8.2  # Faster Excel reading
 
 # Optional: Better fuzzy string matching
 fuzzywuzzy==0.18.0
