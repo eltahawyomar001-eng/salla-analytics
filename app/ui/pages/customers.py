@@ -46,18 +46,33 @@ def render_customers_page():
     
     heatmap_data = rfm_results.get('heatmap_data', {})
     
-    if heatmap_data:
+    # Debug: Show what keys are available
+    with st.expander("🔍 Debug: Heatmap Data Structure", expanded=False):
+        st.write("Available keys:", list(heatmap_data.keys()) if heatmap_data else "No heatmap_data")
+        if heatmap_data:
+            st.write("value_matrix shape:", len(heatmap_data.get('value_matrix', [])))
+            st.write("r_labels:", heatmap_data.get('r_labels', []))
+            st.write("f_labels:", heatmap_data.get('f_labels', []))
+    
+    if heatmap_data and heatmap_data.get('value_matrix'):
+        # Use correct key names from RFM analyzer
         fig = go.Figure(data=go.Heatmap(
-            z=heatmap_data.get('values', []),
-            x=heatmap_data.get('x_labels', []),
-            y=heatmap_data.get('y_labels', []),
-            colorscale='Greens'
+            z=heatmap_data.get('value_matrix', []),  # Fixed: was 'values'
+            x=heatmap_data.get('r_labels', []),       # Fixed: was 'x_labels'
+            y=heatmap_data.get('f_labels', []),       # Fixed: was 'y_labels'
+            colorscale='Greens',
+            text=heatmap_data.get('count_matrix', []),  # Show customer counts
+            texttemplate='%{text:.0f} customers',
+            hovertemplate='Recency: %{y}<br>Frequency: %{x}<br>Avg LTV: %{z:,.2f}<br>Customers: %{text}<extra></extra>'
         ))
         
         fig.update_layout(
-            xaxis_title='Frequency',
-            yaxis_title='Recency',
-            height=600
+            xaxis_title='Recency Score (R)',
+            yaxis_title='Frequency Score (F)',
+            height=600,
+            title='RFM Heatmap: Average Customer Lifetime Value'
         )
         
         st.plotly_chart(fig, use_container_width=True)
+    else:
+        st.warning("⚠️ No heatmap data available. This could mean insufficient customer data for heatmap generation.")

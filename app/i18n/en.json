@@ -7,7 +7,7 @@
   "navigation": {
     "upload": "Upload & Map",
     "summary": "Executive Summary",
-    "insights": "💰 Financial Insights",
+    "insights": "Financial Insights",
     "customers": "Customers (RFM)",
     "cohorts": "Cohorts & Retention",
     "products": "Products",
@@ -314,16 +314,16 @@
     "filename": "Filename"
   },
   "errors": {
-    "file_too_large": "File is too large. Maximum size is 500MB.",
-    "invalid_format": "Invalid file format. Please upload XLSX files only.",
-    "no_data": "No data found in the uploaded file.",
-    "no_analysis": "No analysis results available. Please upload and process data first.",
-    "missing_required_columns": "Missing required columns",
-    "insufficient_data": "Insufficient data for analysis",
-    "processing_error": "Error processing file: {error}",
-    "check_file_format": "Please check the file format and try again.",
-    "analysis_error": "Error during analysis: {error}",
-    "export_error": "Error exporting report"
+    "file_too_large": "📦 Oops! This file is too large.\n\n**What to do:** Please use a file under 500MB, or split your data into smaller time periods.",
+    "invalid_format": "❌ Hmm, this file format isn't supported.\n\n**What we need:** Excel files (.xlsx or .xls)\n\n**What to do:** Save your file as Excel format and try again.",
+    "no_data": "📊 We couldn't find any data in your file.\n\n**What to check:**\n✓ File contains order data\n✓ Data is in the first sheet\n✓ Headers are in the first row\n\nNeed help? Check our file requirements guide.",
+    "no_analysis": "📈 Ready to get started?\n\n**To view this page, you need to:**\n1. Go to 'Upload & Map Data'\n2. Upload your Excel file\n3. Click 'Process Data'\n\nThen come back here to see your insights!",
+    "missing_required_columns": "⚠️ Some required columns are missing.\n\n**What we need:** Order ID, Order Date, Customer ID, Order Total\n\n**What to do:** Go back and map these columns in Step 2.",
+    "insufficient_data": "📉 Not enough data to generate meaningful insights.\n\n**Recommended:** At least 100 orders for reliable analysis.\n\n**What to do:** Upload a file with more historical data.",
+    "processing_error": "⚠️ Something went wrong while processing your file.\n\n**Error details:** {error}\n\n**What to try:**\n✓ Check your file format\n✓ Try uploading again\n✓ Contact support if this keeps happening",
+    "check_file_format": "Please check your file follows these requirements:\n✓ Excel format (.xlsx)\n✓ Has required columns\n✓ Contains valid order data",
+    "analysis_error": "⚠️ Analysis couldn't complete.\n\n**Error:** {error}\n\n**Quick fixes:**\n✓ Verify your data is clean\n✓ Check date formats\n✓ Try re-uploading the file",
+    "export_error": "❌ Couldn't export your report.\n\n**What to try:**\n✓ Try downloading again\n✓ Check your browser permissions\n✓ Contact support if issue persists"
   },
   "banners": {
     "missing_currency": "Currency information missing - showing amounts without currency conversion",

@@ -72,42 +72,58 @@ def main():
     st.sidebar.markdown(f"*{t['app']['subtitle']}*")
     st.sidebar.markdown("---")
     
-    # Language selector
-    language_options = {
-        'en': 'English 🇬🇧',
-        'ar': 'العربية 🇸🇦'
-    }
+    # Language selector - More prominent
+    st.sidebar.markdown("### 🌍 " + ("Language" if st.session_state.language == 'en' else "اللغة"))
     
-    selected_lang = st.sidebar.selectbox(
-        "Language / اللغة",
-        options=list(language_options.keys()),
-        format_func=lambda x: language_options[x],
-        index=list(language_options.keys()).index(st.session_state.language),
-        key='lang_selector'
-    )
+    # Create language toggle buttons
+    col1, col2 = st.sidebar.columns(2)
+    with col1:
+        if st.button("🇬🇧 English", 
+                    use_container_width=True, 
+                    type="primary" if st.session_state.language == 'en' else "secondary"):
+            set_language('en')
+            st.rerun()
+    with col2:
+        if st.button("🇸🇦 العربية", 
+                    use_container_width=True,
+                    type="primary" if st.session_state.language == 'ar' else "secondary"):
+            set_language('ar')
+            st.rerun()
     
-    if selected_lang != st.session_state.language:
-        if selected_lang:
-            set_language(selected_lang)
-        st.rerun()
+    st.sidebar.markdown("---")
     
     # Navigation menu
-    st.sidebar.markdown("### " + ("Navigation" if st.session_state.language == 'en' else "التنقل"))
+    st.sidebar.markdown("### " + ("📍 Navigation" if st.session_state.language == 'en' else "📍 التنقل"))
     
-    pages = {
-        "upload": t['navigation']['upload'],
-        "summary": t['navigation']['summary'],
-        "insights": t['navigation'].get('insights', 'Financial Insights'),
-        "customers": t['navigation']['customers'],
-        "cohorts": t['navigation']['cohorts'],
-        "products": t['navigation']['products'],
-        "actions": t['navigation']['actions']
-    }
+    # Enhanced navigation with priority indicators
+    if st.session_state.language == 'en':
+        pages = {
+            "upload": "📤 Upload & Map Data",
+            "summary": "📊 Executive Summary ⭐",
+            "insights": "💰 Financial Insights ⭐",
+            "customers": "👥 Customer Segments",
+            "cohorts": "📈 Cohort Analysis",
+            "products": "🛍️ Product Performance",
+            "actions": "⚡ Action Playbooks ⭐"
+        }
+    else:
+        pages = {
+            "upload": "📤 رفع وربط البيانات",
+            "summary": "📊 الملخص التنفيذي ⭐",
+            "insights": "💰 الرؤى المالية ⭐",
+            "customers": "👥 شرائح العملاء",
+            "cohorts": "📈 تحليل المجموعات",
+            "products": "🛍️ أداء المنتجات",
+            "actions": "⚡ خطط العمل ⭐"
+        }
     
-    # Always show navigation, but show a warning if no data is loaded
+    # Always show navigation, but show helpful hint if no data is loaded
     if not st.session_state.data_loaded:
-        st.sidebar.warning("⚠️ Upload data first" if st.session_state.language == 'en' 
-                          else "⚠️ الرجاء رفع البيانات أولاً")
+        st.sidebar.info("💡 " + ("Start by uploading data" if st.session_state.language == 'en' 
+                          else "ابدأ برفع البيانات"))
+    else:
+        st.sidebar.success("✅ " + ("Data loaded" if st.session_state.language == 'en' 
+                          else "تم تحميل البيانات"))
     
     # Navigation radio buttons (always visible)
     page = st.sidebar.radio(

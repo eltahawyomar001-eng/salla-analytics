@@ -331,3 +331,55 @@ def create_segment_card(
         )
     
     st.markdown('</div>', unsafe_allow_html=True)
+
+
+def show_welcome_banner(language: str = 'en'):
+    """Show welcome banner for first-time users.
+    
+    Args:
+        language: Language code ('en' or 'ar')
+    """
+    # Check if user has seen welcome banner
+    if st.session_state.get('welcome_seen', False):
+        return
+    
+    t = get_translator(language)
+    
+    # Welcome message
+    if language == 'ar':
+        st.markdown("""
+        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+                    padding: 2rem; border-radius: 10px; color: white; text-align: right; margin-bottom: 2rem;">
+            <h2 style="margin: 0; color: white;">👋 مرحباً بك في التحليل المتقدم لسلة!</h2>
+            <p style="font-size: 1.1rem; margin-top: 1rem; color: #f0f0f0;">
+                اتبع هذه الخطوات الثلاث البسيطة:
+            </p>
+            <ol style="font-size: 1rem; color: #f0f0f0; margin-right: 1.5rem;">
+                <li>📤 ارفع ملف Excel من سلة</li>
+                <li>🔗 ربط الأعمدة (يتم تلقائياً)</li>
+                <li>📊 استكشف الرؤى والتوصيات</li>
+            </ol>
+        </div>
+        """, unsafe_allow_html=True)
+    else:
+        st.markdown("""
+        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+                    padding: 2rem; border-radius: 10px; color: white; margin-bottom: 2rem;">
+            <h2 style="margin: 0; color: white;">👋 Welcome to Advanced Analysis for Salla!</h2>
+            <p style="font-size: 1.1rem; margin-top: 1rem; color: #f0f0f0;">
+                Follow these 3 simple steps:
+            </p>
+            <ol style="font-size: 1rem; color: #f0f0f0;">
+                <li>📤 Upload your Salla Excel export</li>
+                <li>🔗 Map columns (auto-detected)</li>
+                <li>📊 Explore insights & recommendations</li>
+            </ol>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    # Dismiss button
+    col1, col2, col3 = st.columns([2, 1, 2])
+    with col2:
+        if st.button("✓ Got it!" if language == 'en' else "✓ فهمت!", use_container_width=True):
+            st.session_state.welcome_seen = True
+            st.rerun()

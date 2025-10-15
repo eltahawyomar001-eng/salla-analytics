@@ -7,7 +7,7 @@ import logging
 from io import BytesIO
 from typing import Dict, Any
 
-from app.ui.components import get_translator, show_info_banner, format_number
+from app.ui.components import get_translator, show_info_banner, format_number, show_welcome_banner
 from app.ingestion.reader import XLSXReader
 from app.ingestion.mapper import ColumnMapper
 from app.ingestion.validators import DataValidator
@@ -35,27 +35,83 @@ def render_upload_page():
     st.title(t['navigation']['upload'])
     st.markdown(t['upload']['description'])
     
+    # Show welcome banner for first-time users (if not already loaded data)
+    if not st.session_state.get('data_loaded', False):
+        show_welcome_banner(language)
+    
     # If data is already loaded and analysis is complete, show success and tell user to use navigation
     if st.session_state.get('data_loaded', False):
-        st.success("✅ **Data analysis complete!**")
+        # Get data stats for display
+        df_clean = st.session_state.get('df_clean')
+        kpis = st.session_state.analysis_results.get('kpis', {})
+        
+        # Success message
+        st.success("✅ **Analysis Complete!** 🎉")
         st.balloons()
-        st.info("👈 **Use the navigation menu on the left** to view your analysis results (Executive Summary, Financial Insights, Customers, etc.)")
-        st.markdown("---")
-        st.info("📊 Navigate to **Executive Summary**, **Financial Insights**, **Customers (RFM)**, or other pages to explore your data.")
         
-        # Show which analyses are available
-        st.markdown("### 📈 Available Analysis:")
-        cols = st.columns(3)
-        with cols[0]:
-            st.markdown("- ✅ Executive Summary\n- ✅ Financial Insights")
-        with cols[1]:
-            st.markdown("- ✅ Customer Segmentation (RFM)\n- ✅ Cohort Analysis")
-        with cols[2]:
-            st.markdown("- ✅ Anomaly Detection\n- ✅ Product Analysis")
+        # Data summary card
+        if df_clean is not None:
+            col1, col2, col3, col4 = st.columns(4)
+            with col1:
+                st.metric("Orders Analyzed", f"{len(df_clean):,}")
+            with col2:
+                customers = kpis.get('customer_metrics', {}).get('total_customers', df_clean['customer_id'].nunique())
+                st.metric("Unique Customers", f"{customers:,}")
+            with col3:
+                date_range = f"{df_clean['order_date'].min().strftime('%b %Y')} - {df_clean['order_date'].max().strftime('%b %Y')}"
+                st.metric("Date Range", date_range)
+            with col4:
+                currency = kpis.get('currency', '')
+                revenue = kpis.get('revenue_metrics', {}).get('total_revenue', df_clean['order_total'].sum())
+                st.metric("Total Revenue", f"{currency} {revenue:,.0f}" if currency else f"{revenue:,.0f}")
         
-        # Option to upload a new file
         st.markdown("---")
-        if st.button("📤 Upload New File", type="secondary"):
+        
+        # Next steps with prominent buttons
+        st.markdown("### � Next Step: Explore Your Insights")
+        st.markdown("*Click any button below to view detailed analysis*")
+        
+        col1, col2, col3 = st.columns(3)
+        
+        with col1:
+            if st.button("📊 Executive Summary ⭐", use_container_width=True, type="primary"):
+                st.session_state.page_selector = "summary"
+                st.rerun()
+            st.caption("Overall performance metrics")
+        
+        with col2:
+            if st.button("💰 Financial Insights ⭐", use_container_width=True, type="primary"):
+                st.session_state.page_selector = "insights"
+                st.rerun()
+            st.caption("Revenue opportunities & ROI")
+        
+        with col3:
+            if st.button("👥 Customer Segments", use_container_width=True, type="secondary"):
+                st.session_state.page_selector = "customers"
+                st.rerun()
+            st.caption("RFM analysis & segments")
+        
+        st.markdown("---")
+        
+        # All available analyses in compact format
+        with st.expander("📈 See All Available Analyses", expanded=False):
+            cols = st.columns(2)
+            with cols[0]:
+                st.markdown("""
+                ✅ **Executive Summary** - KPIs & trends  
+                ✅ **Financial Insights** - Action plans  
+                ✅ **Customer Segmentation** - RFM analysis
+                """)
+            with cols[1]:
+                st.markdown("""
+                ✅ **Cohort Analysis** - Retention trends  
+                ✅ **Product Performance** - Top sellers  
+                ✅ **Action Playbooks** - Quick wins
+                """)
+        
+        # Upload new file option (less prominent)
+        st.markdown("---")
+        if st.button("� Upload New File", type="secondary"):
             # Clear session state for new upload
             for key in list(st.session_state.keys()):
                 if key not in ['language', 'lang_selector']:
