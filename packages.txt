@@ -1,0 +1,9 @@
+# System packages needed for deployment
+# These will be installed via apt-get on Linux systems
+
+# For Arabic text processing (optional)
+# fonts-arabeyes
+
+# For better Excel reading performance
+# libxslt1-dev
+# libxml2-dev

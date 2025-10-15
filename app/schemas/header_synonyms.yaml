@@ -1,0 +1,305 @@
+# Header Synonyms for Auto-Detection
+# Maps various header names to canonical field names
+
+synonyms:
+  order_id:
+    english:
+      - "Order ID"
+      - "Order Number"
+      - "Order Reference"
+      - "ID"
+      - "OrderID"
+      - "Order_ID"
+      - "order_id"
+      - "order_number"
+      - "order_reference"
+    arabic:
+      - "رقم الطلب"
+      - "معرف الطلب"
+      - "رقم الأوردر"
+      - "كود الطلب"
+      - "مرجع الطلب"
+
+  order_date:
+    english:
+      - "Order Date"
+      - "Created At"
+      - "Date"
+      - "Purchase Date"
+      - "Order DateTime"
+      - "order_date"
+      - "created_at"
+      - "date"
+      - "order_datetime"
+    arabic:
+      - "تاريخ الطلب"
+      - "تاريخ الإنشاء"
+      - "التاريخ"
+      - "تاريخ الشراء"
+
+  order_status:
+    english:
+      - "Order Status"
+      - "Status"
+      - "Order State"
+      - "order_status"
+      - "status"
+      - "order_state"
+    arabic:
+      - "حالة الطلب"
+      - "الحالة"
+      - "وضع الطلب"
+
+  currency:
+    english:
+      - "Currency"
+      - "Currency Code"
+      - "Curr"
+      - "currency"
+      - "currency_code"
+    arabic:
+      - "العملة"
+      - "رمز العملة"
+      - "كود العملة"
+
+  order_total:
+    english:
+      - "Order Total"
+      - "Total"
+      - "Amount"
+      - "Grand Total"
+      - "Final Amount"
+      - "order_total"
+      - "total"
+      - "amount"
+      - "grand_total"
+      - "Item Price"
+      - "item_price"
+      - "Price"
+      - "price"
+      - "unit_price"
+      - "Unit Price"
+      - "Sales"
+      - "sales"
+      - "Revenue"
+      - "revenue"
+    arabic:
+      - "إجمالي الطلب"
+      - "المجموع"
+      - "المبلغ"
+      - "المجموع الكلي"
+      - "المبلغ النهائي"
+      - "مجموع السلة"
+      - "السلة"
+      - "الإجمالي"
+
+  customer_id:
+    english:
+      - "Customer ID"
+      - "User ID"
+      - "Client ID"
+      - "Cust ID"
+      - "customer_id"
+      - "user_id"
+      - "client_id"
+      - "Customer"
+      - "Phone"
+      - "Mobile"
+    arabic:
+      - "معرف العميل"
+      - "رقم العميل"
+      - "كود العميل"
+      - "معرف المستخدم"
+      - "العميل"
+      - "الجوال"
+      - "رقم الجوال"
+      - "الهاتف"
+      - "رقم الهاتف"
+      - "جوال"
+      - "هاتف"
+
+  customer_name:
+    english:
+      - "Customer Name"
+      - "Name"
+      - "Full Name"
+      - "Customer Full Name"
+      - "customer_name"
+      - "name"
+      - "full_name"
+    arabic:
+      - "اسم العميل"
+      - "الاسم"
+      - "الاسم الكامل"
+      - "اسم العميل الكامل"
+
+  customer_email:
+    english:
+      - "Customer Email"
+      - "Email"
+      - "Email Address"
+      - "User Email"
+      - "customer_email"
+      - "email"
+      - "email_address"
+    arabic:
+      - "بريد العميل الإلكتروني"
+      - "البريد الإلكتروني"
+      - "الإيميل"
+
+  customer_phone:
+    english:
+      - "Customer Phone"
+      - "Phone"
+      - "Mobile"
+      - "Phone Number"
+      - "Contact Number"
+      - "customer_phone"
+      - "phone"
+      - "mobile"
+    arabic:
+      - "هاتف العميل"
+      - "الهاتف"
+      - "الجوال"
+      - "رقم الهاتف"
+      - "رقم الجوال"
+      - "جوال"
+      - "هاتف"
+      - "موبايل"
+
+  product_id:
+    english:
+      - "Product ID"
+      - "SKU ID"
+      - "Item SKU"
+      - "Product SKU"
+      - "product_id"
+      - "sku_id"
+      - "product_sku"
+    arabic:
+      - "معرف المنتج"
+      - "رقم المنتج"
+      - "كود المنتج"
+
+  product_name:
+    english:
+      - "Product Name"
+      - "Item Name"
+      - "Product Title"
+      - "Name"
+      - "product_name"
+      - "item_name"
+      - "product_title"
+    arabic:
+      - "اسم المنتج"
+      - "اسم الصنف"
+      - "عنوان المنتج"
+      - "المنتجات"
+      - "اسماء المنتجات"
+      - "اسماء المنتجات مع SKU"
+
+  quantity:
+    english:
+      - "Quantity"
+      - "Qty"
+      - "Amount"
+      - "Count"
+      - "quantity"
+      - "qty"
+      - "count"
+    arabic:
+      - "الكمية"
+      - "العدد"
+      - "المقدار"
+
+  item_total:
+    english:
+      - "Item Total"
+      - "Line Total"
+      - "Item Amount"
+      - "Product Total"
+      - "item_total"
+      - "line_total"
+      - "item_amount"
+    arabic:
+      - "إجمالي الصنف"
+      - "مجموع السطر"
+      - "مبلغ الصنف"
+
+  discounts:
+    english:
+      - "Discounts"
+      - "Discount"
+      - "Discount Amount"
+      - "Savings"
+      - "discounts"
+      - "discount"
+      - "discount_amount"
+    arabic:
+      - "الخصومات"
+      - "الخصم"
+      - "مبلغ الخصم"
+
+  shipping:
+    english:
+      - "Shipping"
+      - "Shipping Cost"
+      - "Delivery Fee"
+      - "Shipping Amount"
+      - "shipping"
+      - "shipping_cost"
+      - "delivery_fee"
+    arabic:
+      - "الشحن"
+      - "تكلفة الشحن"
+      - "رسوم التوصيل"
+
+  taxes:
+    english:
+      - "Taxes"
+      - "Tax"
+      - "Tax Amount"
+      - "VAT"
+      - "taxes"
+      - "tax"
+      - "tax_amount"
+      - "vat"
+    arabic:
+      - "الضرائب"
+      - "الضريبة"
+      - "مبلغ الضريبة"
+      - "ضريبة القيمة المضافة"
+
+# Common patterns for fuzzy matching
+patterns:
+  date_indicators:
+    - "date"
+    - "time"
+    - "created"
+    - "تاريخ"
+    - "وقت"
+  
+  amount_indicators:
+    - "total"
+    - "amount"
+    - "price"
+    - "cost"
+    - "المبلغ"
+    - "السعر"
+    - "التكلفة"
+  
+  id_indicators:
+    - "id"
+    - "number"
+    - "code"
+    - "رقم"
+    - "كود"
+    - "معرف"
+
+# Confidence scoring weights
+scoring:
+  exact_match: 1.0
+  case_insensitive_match: 0.9
+  fuzzy_match: 0.7
+  pattern_match: 0.6
+  position_bonus: 0.1  # Bonus for expected column positions

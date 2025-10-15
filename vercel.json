@@ -1,0 +1,9 @@
+# Note: Vercel does not support Streamlit applications directly.
+# Please use Streamlit Cloud for deployment instead.
+# 
+# This file is kept for reference only.
+# For Streamlit Cloud deployment, use the files:
+# - requirements.txt
+# - .streamlit/config.toml
+# - packages.txt (if needed)
+

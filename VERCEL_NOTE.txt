@@ -1,0 +1,8 @@
+# IMPORTANT: Streamlit apps cannot be deployed on Vercel
+# Use Streamlit Cloud instead: https://streamlit.io/cloud
+#
+# For alternative deployment options:
+# - Streamlit Cloud (Recommended) - Free tier available
+# - Render.com - Good Streamlit support
+# - Railway.app - Docker-based deployment
+# - Heroku - Requires Procfile

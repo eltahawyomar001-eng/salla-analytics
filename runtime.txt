@@ -1,0 +1,2 @@
+# Vercel Configuration for Streamlit App
+python-3.11.0

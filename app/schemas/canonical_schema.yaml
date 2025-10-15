@@ -1,0 +1,144 @@
+# Canonical Schema for Salla Analytics
+# This file defines the expected data structure for the application
+
+canonical_schema:
+  order_fields:
+    order_id:
+      type: string
+      required: true
+      description: "Unique identifier for each order"
+      aliases: ["order_number", "order_reference", "id"]
+    
+    order_date:
+      type: datetime
+      required: true
+      description: "Date and time when the order was placed"
+      aliases: ["created_at", "date", "order_datetime", "purchase_date"]
+    
+    order_status:
+      type: string
+      required: false
+      description: "Current status of the order"
+      aliases: ["status", "order_state"]
+      valid_values: ["pending", "processing", "shipped", "delivered", "cancelled", "refunded"]
+    
+    currency:
+      type: string
+      required: false
+      description: "Currency code for the order"
+      aliases: ["currency_code", "curr"]
+      default: "SAR"
+    
+    order_total:
+      type: float
+      required: true
+      description: "Total amount of the order including taxes and shipping"
+      aliases: ["total", "amount", "grand_total", "final_amount"]
+
+  customer_fields:
+    customer_id:
+      type: string
+      required: true
+      description: "Unique identifier for the customer"
+      aliases: ["user_id", "client_id", "cust_id"]
+    
+    customer_name:
+      type: string
+      required: false
+      description: "Full name of the customer"
+      aliases: ["name", "full_name", "customer_full_name"]
+    
+    customer_email:
+      type: string
+      required: false
+      description: "Email address of the customer"
+      aliases: ["email", "email_address", "user_email"]
+    
+    customer_phone:
+      type: string
+      required: false
+      description: "Phone number of the customer"
+      aliases: ["phone", "mobile", "phone_number", "contact_number"]
+
+  product_fields:
+    line_item_id:
+      type: string
+      required: false
+      description: "Unique identifier for each line item"
+      aliases: ["item_id", "line_id"]
+    
+    product_id:
+      type: string
+      required: false
+      description: "Unique identifier for the product"
+      aliases: ["sku_id", "item_sku", "product_sku"]
+    
+    product_name:
+      type: string
+      required: false
+      description: "Name or title of the product"
+      aliases: ["item_name", "product_title", "name"]
+    
+    sku:
+      type: string
+      required: false
+      description: "Stock Keeping Unit identifier"
+      aliases: ["product_sku", "item_code"]
+    
+    quantity:
+      type: float
+      required: false
+      description: "Quantity of the product ordered"
+      aliases: ["qty", "amount", "count"]
+    
+    item_total:
+      type: float
+      required: false
+      description: "Total amount for this line item"
+      aliases: ["line_total", "item_amount", "product_total"]
+
+  financial_fields:
+    discounts:
+      type: float
+      required: false
+      description: "Discount amount applied to the order"
+      aliases: ["discount", "discount_amount", "savings"]
+    
+    shipping:
+      type: float
+      required: false
+      description: "Shipping cost for the order"
+      aliases: ["shipping_cost", "delivery_fee", "shipping_amount"]
+    
+    taxes:
+      type: float
+      required: false
+      description: "Tax amount for the order"
+      aliases: ["tax", "tax_amount", "vat"]
+    
+    refund_amount:
+      type: float
+      required: false
+      description: "Amount refunded for the order"
+      aliases: ["refund", "returned_amount"]
+
+  status_fields:
+    fulfillment_status:
+      type: string
+      required: false
+      description: "Fulfillment status of the order"
+      aliases: ["shipping_status", "delivery_status"]
+      valid_values: ["pending", "processing", "shipped", "delivered", "cancelled"]
+    
+    payment_status:
+      type: string
+      required: false
+      description: "Payment status of the order"
+      aliases: ["pay_status", "payment_state"]
+      valid_values: ["pending", "paid", "failed", "refunded", "partially_refunded"]
+
+data_quality:
+  required_fields: ["order_id", "order_date", "customer_id", "order_total"]
+  min_data_completeness: 0.8
+  date_range_validation: true
+  duplicate_detection: true

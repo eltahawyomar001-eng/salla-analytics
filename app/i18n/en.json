@@ -1,0 +1,359 @@
+{
+  "app": {
+    "title": "Advanced Analysis for Salla",
+    "subtitle": "Non-assumptive, fully automated analytics for Salla XLSX exports",
+    "version": "v1.0.0"
+  },
+  "navigation": {
+    "upload": "Upload & Map",
+    "summary": "Executive Summary",
+    "insights": "💰 Financial Insights",
+    "customers": "Customers (RFM)",
+    "cohorts": "Cohorts & Retention",
+    "products": "Products",
+    "actions": "Actions & Playbooks"
+  },
+  "upload": {
+    "title": "Upload & Map Data",
+    "description": "Upload your Salla XLSX files and map columns",
+    "choose_file": "Choose XLSX File",
+    "file_requirements": "File Requirements",
+    "max_file_size": "Maximum file size: 500MB",
+    "supported_formats": "Supported formats: .xlsx",
+    "file_uploaded": "✅ File uploaded successfully",
+    "reading_file": "📖 Reading file...",
+    "file_read_success": "✅ File read successfully",
+    "preview_data": "Preview Data (First 5 rows)",
+    "step_mapping": "Step 2: Column Mapping",
+    "detecting_columns": "🔍 Auto-detecting columns...",
+    "auto_detect_success": "✅ All required fields detected automatically!",
+    "auto_detect_partial": "⚠️ Some fields detected. Please map the remaining required fields manually.",
+    "detected_mappings": "Detected Column Mappings",
+    "required_fields": "Required Fields",
+    "optional_fields": "Optional Fields (Recommended)",
+    "order_id": "Order ID",
+    "order_date": "Order Date",
+    "customer_id": "Customer ID",
+    "order_total": "Order Total",
+    "order_status": "Order Status",
+    "product_name": "Product Name",
+    "category": "Category",
+    "quantity": "Quantity",
+    "unit_price": "Unit Price",
+    "customer_name": "Customer Name",
+    "customer_email": "Customer Email",
+    "customer_phone": "Customer Phone",
+    "currency": "Currency",
+    "select_column": "Select column...",
+    "not_in_file": "Not in file",
+    "step_validate": "Step 3: Validate & Process",
+    "validating_data": "🔍 Validating data...",
+    "validation_results": "Validation Results",
+    "errors_found": "errors found",
+    "warnings_found": "warnings found",
+    "total_orders": "Total Orders",
+    "valid_orders": "Valid Orders",
+    "date_range": "Date Range",
+    "unique_customers": "Unique Customers",
+    "unique_products": "Unique Products",
+    "validation_errors": "Validation Errors",
+    "validation_warnings_title": "Validation Warnings",
+    "run_analysis": "▶️ Run Full Analysis",
+    "processing": "⏳ Processing analytics...",
+    "analysis_complete": "✅ Analysis Complete!",
+    "view_results": "View results in the dashboard pages above.",
+    "dropzone_text": "Drag and drop XLSX files here, or click to browse",
+    "schema_detection": "Schema Detection",
+    "auto_detected": "Auto-detected columns",
+    "mapping_required": "Column mapping required",
+    "confidence": "Confidence",
+    "manual_mapping": "Manual Column Mapping",
+    "data_quality": "Data Quality Check",
+    "no_file": "📤 No file uploaded yet. Please upload a Salla XLSX file to begin.",
+    "requirements_title": "📋 File Requirements",
+    "requirements_list": "**Required Columns:**\n- Order ID\n- Order Date\n- Customer ID\n- Order Total\n\n**Optional Columns (Recommended):**\n- Order Status\n- Product Name\n- Category\n- Quantity\n- Unit Price\n- Customer Name\n- Customer Email\n- Customer Phone\n- Currency",
+    "process_button": "✓ Process Data",
+    "validating_mappings": "🔍 Validating column mappings...",
+    "invalid_mappings": "❌ Invalid column mappings",
+    "mappings_valid": "✅ Column mappings are valid",
+    "validation_warnings": "⚠️ Data validation warnings:",
+    "more_errors": "...and {count} more errors",
+    "quality_excellent": "✅ Data quality is excellent ({score}%)",
+    "quality_good": "✓ Data quality is good ({score}%)",
+    "quality_low": "⚠️ Data quality needs improvement ({score}%)",
+    "cleaning_data": "🧹 Cleaning data...",
+    "rows_removed": "ℹ️ {count} rows removed due to quality issues",
+    "cleaning_complete": "✅ Data cleaning complete. {rows} valid rows ready for analysis.",
+    "running_analysis": "🔬 Running Analysis",
+    "analyzing_kpis": "Calculating KPIs...",
+    "analyzing_rfm": "Analyzing customer segments (RFM)...",
+    "analyzing_cohorts": "Building cohort analysis...",
+    "analyzing_products": "Analyzing products...",
+    "detecting_anomalies": "Detecting anomalies...",
+    "navigate_hint": "💡 Navigate to other pages using the sidebar to view detailed results."
+  },
+  "summary": {
+    "title": "Executive Summary",
+    "description": "Comprehensive overview of your Salla store performance",
+    "period": "Analysis Period",
+    "kpis": "Key Performance Indicators",
+    "key_metrics": "Key Metrics",
+    "total_revenue": "Total Revenue",
+    "total_orders": "Total Orders",
+    "total_customers": "Total Customers",
+    "unique_customers": "Unique Customers",
+    "average_order_value": "Average Order Value",
+    "avg_order_value": "Average Order Value",
+    "avg_ltv": "Average Customer LTV",
+    "orders_per_customer": "Orders per Customer",
+    "repeat_rate": "Repeat Rate",
+    "new_customers": "New Customers",
+    "returning_customers": "Returning Customers",
+    "new_vs_returning": "New vs Returning",
+    "revenue_trends": "Revenue Trends",
+    "revenue": "Revenue",
+    "month": "Month",
+    "customer_distribution": "Customer Distribution",
+    "revenue_distribution": "Revenue Distribution",
+    "monthly_trend": "Monthly Revenue Trend",
+    "insights": "Key Insights",
+    "no_assumptions": "No-Assumptions Notice"
+  },
+  "customers": {
+    "title": "Customer Analysis (RFM)",
+    "rfm_explanation": "RFM Analysis segments customers based on Recency, Frequency, and Monetary value",
+    "segment_overview": "Customer Segments Overview",
+    "rfm_heatmap": "RFM Distribution Heatmap",
+    "total_customers": "Total Customers",
+    "avg_revenue_per_customer": "Avg Revenue/Customer",
+    "percentage_of_total": "% of Total Customers",
+    "segment_explanation": "💡 **What is RFM?** Your customers are divided into 9 strategic segments based on:\n- **Recency**: How recently they purchased\n- **Frequency**: How often they purchase\n- **Monetary**: How much they spend\n\nUse these segments to target each group with personalized marketing strategies.",
+    "recency": "Recency",
+    "frequency": "Frequency", 
+    "monetary": "Monetary",
+    "recency_desc": "Days since last order",
+    "frequency_desc": "Number of orders",
+    "monetary_desc": "Total spent",
+    "segment_distribution": "Customer Segment Distribution",
+    "segment_revenue": "Revenue by Segment",
+    "customer_details": "Customer Details",
+    "download_customers": "Download Customer Data"
+  },
+  "cohorts": {
+    "title": "Cohort Analysis & Retention",
+    "description": "Track customer retention by first purchase month",
+    "explanation": "💡 **Cohort Retention:** This heatmap shows what percentage of customers from each cohort (first purchase month) continued to make purchases in subsequent months. Darker blues = higher retention.\n\n**How to read it:**\n- Each row is a cohort (customers who first purchased in that month)\n- Each column shows retention X months after first purchase\n- High retention = loyal customer base\n- Low retention = need better retention strategies",
+    "cohort_table": "Cohort Retention Matrix",
+    "retention_matrix": "Retention Matrix",
+    "retention_curves": "Retention Curves",
+    "repeat_purchase": "Time to Second Purchase",
+    "cohort_size": "Cohort Size",
+    "cohort": "Cohort (First Purchase Month)",
+    "period": "Months Since First Purchase",
+    "month": "Month",
+    "no_cohort_data": "⚠️ **Insufficient data for cohort analysis.** Cohort analysis requires customers with multiple purchases over time. Your data shows mostly one-time purchasers or a short time period."
+  },
+  "products": {
+    "title": "Product Analysis",
+    "description": "Understand which products drive your revenue and customer engagement",
+    "explanation": "💡 **Product Insights:** This analysis shows your best-performing products by revenue, quantity sold, and customer reach. Use this to optimize inventory, pricing, and promotions.",
+    "top_products": "Top 10 Products by Revenue",
+    "top_by_quantity": "Top 10 Products by Units Sold",
+    "by_revenue": "By Revenue",
+    "by_quantity": "By Quantity",
+    "by_customers": "By Unique Customers",
+    "product_name": "Product Name",
+    "revenue": "Revenue",
+    "quantity": "Units Sold",
+    "customers": "Unique Customers",
+    "aov": "Average Order Value",
+    "co_purchase": "Frequently Bought Together",
+    "insufficient_signal": "Insufficient data for co-purchase analysis",
+    "no_product_data": "⚠️ **No product data available.** Your export file doesn't contain product names or the column wasn't mapped. To see product analysis:\n1. Ensure your Salla export includes product information\n2. Re-upload the file and map the 'Product Name' column"
+  },
+  "actions": {
+    "title": "Actions & Playbooks",
+    "description": "Segment-specific action recommendations",
+    "segment": "Segment",
+    "customers_count": "Customers",
+    "revenue_share": "Revenue Share",
+    "recommended_actions": "Recommended Actions"
+  },
+  "segments": {
+    "Champions": {
+      "name": "Champions",
+      "description": "Best customers who bought recently, buy often and spend the most",
+      "actions": [
+        "Reward them with exclusive offers and early access to new products",
+        "Make them brand ambassadors through referral programs",
+        "Ask for reviews and testimonials",
+        "Provide premium customer service",
+        "Offer loyalty program benefits"
+      ]
+    },
+    "Loyal Customers": {
+      "name": "Loyal Customers", 
+      "description": "Loyal customers with good recency and high frequency",
+      "actions": [
+        "Introduce higher-value products",
+        "Offer bundle deals and cross-sell opportunities",
+        "Provide exclusive member benefits",
+        "Send personalized product recommendations",
+        "Create VIP customer experiences"
+      ]
+    },
+    "Potential Loyalists": {
+      "name": "Potential Loyalists",
+      "description": "Recent customers with potential to become loyal", 
+      "actions": [
+        "Create onboarding email sequences",
+        "Offer second purchase incentives",
+        "Share product education content",
+        "Provide exceptional customer service",
+        "Send follow-up surveys and recommendations"
+      ]
+    },
+    "New Customers": {
+      "name": "New Customers",
+      "description": "New customers who bought recently but not frequently",
+      "actions": [
+        "Create welcome campaigns and onboarding flows",
+        "Offer first-time buyer incentives for repeat purchases",
+        "Share brand story and product education",
+        "Collect feedback on first purchase experience",
+        "Provide helpful tips and usage guides"
+      ]
+    },
+    "Promising": {
+      "name": "Promising",
+      "description": "Recent buyers with low frequency and monetary value",
+      "actions": [
+        "Offer starter packages or sample products",
+        "Create educational content about product benefits",
+        "Provide gentle follow-up communications",
+        "Offer small discounts for next purchase",
+        "Share customer success stories"
+      ]
+    },
+    "Need Attention": {
+      "name": "Need Attention", 
+      "description": "Good frequency but low monetary value",
+      "actions": [
+        "Introduce premium products gradually",
+        "Offer bundle deals to increase order value",
+        "Provide volume discounts",
+        "Share higher-value product recommendations",
+        "Create upselling campaigns"
+      ]
+    },
+    "About to Sleep": {
+      "name": "About to Sleep",
+      "description": "Below average recency with good frequency and monetary",
+      "actions": [
+        "Send re-engagement campaigns with special offers",
+        "Share new product launches and updates",
+        "Offer limited-time discounts",
+        "Ask for feedback on why they haven't purchased recently",
+        "Provide exclusive comeback offers"
+      ]
+    },
+    "At Risk": {
+      "name": "At Risk",
+      "description": "High value customers who haven't purchased recently",
+      "actions": [
+        "Create urgent win-back campaigns",
+        "Offer significant discounts or free shipping",
+        "Reach out personally via phone or email",
+        "Survey them about their experience",
+        "Provide exclusive offers to return"
+      ]
+    },
+    "Cannot Lose Them": {
+      "name": "Cannot Lose Them",
+      "description": "High value and frequency customers at risk of churning",
+      "actions": [
+        "Immediate personal outreach from account manager",
+        "Offer substantial win-back incentives",
+        "Provide dedicated customer service",
+        "Survey for service improvement opportunities",
+        "Create exclusive retention offers"
+      ]
+    },
+    "Hibernating": {
+      "name": "Hibernating",
+      "description": "Low recency and frequency but still valuable",
+      "actions": [
+        "Send gentle re-engagement campaigns",
+        "Share new product collections",
+        "Offer moderate discounts",
+        "Provide easy comeback offers",
+        "Focus on brand awareness content"
+      ]
+    },
+    "Lost": {
+      "name": "Lost",
+      "description": "Customers who haven't bought recently, infrequently and low value",
+      "actions": [
+        "Focus on broad brand awareness rather than direct sales",
+        "Send minimal, high-value content",
+        "Offer significant discounts if budget allows",
+        "Consider excluding from regular campaigns",
+        "Monitor for any re-engagement signals"
+      ]
+    }
+  },
+  "export": {
+    "title": "Export Report",
+    "description": "Download comprehensive business analysis report",
+    "download_excel": "Download Excel Report",
+    "download_button": "Click to Download",
+    "export_excel": "Export to Excel",
+    "generating": "Generating report...",
+    "success": "Report generated successfully!",
+    "download_ready": "Download ready!",
+    "filename": "Filename"
+  },
+  "errors": {
+    "file_too_large": "File is too large. Maximum size is 500MB.",
+    "invalid_format": "Invalid file format. Please upload XLSX files only.",
+    "no_data": "No data found in the uploaded file.",
+    "no_analysis": "No analysis results available. Please upload and process data first.",
+    "missing_required_columns": "Missing required columns",
+    "insufficient_data": "Insufficient data for analysis",
+    "processing_error": "Error processing file: {error}",
+    "check_file_format": "Please check the file format and try again.",
+    "analysis_error": "Error during analysis: {error}",
+    "export_error": "Error exporting report"
+  },
+  "banners": {
+    "missing_currency": "Currency information missing - showing amounts without currency conversion",
+    "mixed_currencies": "Multiple currencies detected - analysis performed separately for each",
+    "insufficient_cohort_data": "Insufficient data for reliable cohort analysis",
+    "no_cost_data": "No cost data available - analysis focuses on revenue metrics only",
+    "sparse_field": "Field has less than 5% data coverage"
+  },
+  "common": {
+    "yes": "Yes",
+    "no": "No", 
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "warning": "Warning",
+    "info": "Info",
+    "download": "Download",
+    "upload": "Upload",
+    "cancel": "Cancel",
+    "continue": "Continue",
+    "back": "Back",
+    "next": "Next",
+    "save": "Save",
+    "close": "Close",
+    "total": "Total",
+    "count": "Count",
+    "percentage": "Percentage",
+    "amount": "Amount",
+    "date": "Date",
+    "name": "Name",
+    "status": "Status"
+  }
+}
