@@ -4,8 +4,9 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "advanced-analysis-for-salla"
-version = "1.0.0"
+version = "2.0.0"
 description = "Local, offline analytics tool for Salla XLSX exports"
+authors = [{name = "Omar Rageh"}]
 requires-python = ">=3.11"
 dependencies = [
     "streamlit>=1.29.0",

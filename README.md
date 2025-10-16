@@ -2,18 +2,22 @@
 
 📊 **A Local, Offline Analytics Tool for Salla XLSX Exports**
 
-Comprehensive revenue analytics with RFM segmentation, cohort analysis, product insights, and anomaly detection. Built specifically for Salla merchants who want deep insights into their sales data without external dependencies or cloud services.
+Comprehensive revenue analytics with RFM segmentation, cohort analysis, product insights, geographic analytics, and anomaly detection. Built specifically for Salla merchants who want deep insights into their sales data without external dependencies or cloud services.
 
 ## ✨ Features
 
+### 🆕 Version 2.0.0 - Geographic Analytics Edition
+
+- **🗺️ Geographic Analytics**: Multi-language location detection supporting 8 location types (City, State, Country, Region, Province, County, Postal Code, Address) in 7+ languages
 - **📤 Smart Data Import**: Auto-detects columns with fuzzy matching, supports Arabic headers
-- **📈 Executive Summary**: Key metrics with revenue trends and customer distribution
+- **📈 Executive Summary**: Key metrics with revenue trends and customer distribution  
 - **👥 RFM Customer Segmentation**: 11 distinct segments (Champions, Loyal, At Risk, Lost, etc.)
-- **📅 Cohort Analysis**: Track customer retention and repeat purchase patterns
+- **📅 Cohort Analysis**: Track customer retention and repeat purchase patterns with enhanced visualization
 - **🛍️ Product Analytics**: Top performers, category analysis, market basket insights
 - **⚠️ Anomaly Detection**: Statistical outlier detection for revenue and orders
 - **🌍 Bilingual Support**: Full English and Arabic UI with RTL support
 - **📊 Excel Export**: Comprehensive reports with 10 sheets of insights
+- **🎨 Modern UI/UX**: Beautiful gradient designs, action-focused CTAs, improved navigation
 - **🔒 Privacy-First**: 100% local processing, no data leaves your machine
 
 ## 🚀 Quick Start
@@ -328,7 +332,13 @@ For issues or questions:
 
 ## 🎯 Roadmap
 
-Future enhancements:
+### ✅ Completed in v2.0.0
+- [x] Geographic analysis with multi-language support
+- [x] Modern UI/UX with gradient designs
+- [x] Enhanced cohort visualization
+- [x] Type-safe error handling
+
+### 🚀 Future Enhancements
 - [ ] PDF report generation
 - [ ] Custom segment builder UI
 - [ ] Advanced market basket analysis
@@ -336,7 +346,7 @@ Future enhancements:
 - [ ] Customer journey mapping
 - [ ] API mode for automation
 - [ ] Multi-currency conversion
-- [ ] Geographic analysis (if data available)
+- [ ] Real-time data refresh capabilities
 
 ## 🙏 Acknowledgments
 
@@ -348,4 +358,4 @@ Built with:
 
 ---
 
-**Made with ❤️ for Salla merchants**
+**Version 2.0.0** - Made with ❤️ by Omar Rageh for Salla merchants

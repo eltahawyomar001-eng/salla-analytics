@@ -313,6 +313,19 @@
     "download_ready": "Download ready!",
     "filename": "Filename"
   },
+  "geo_analytics": {
+    "title": "Geographic Analytics",
+    "description": "Analyze revenue and customer distribution across different geographic locations",
+    "no_location_data": "No location data found in your dataset",
+    "top_locations": "Top Locations by Revenue",
+    "revenue_map": "Revenue Distribution Map",
+    "city": "City",
+    "country": "Country",
+    "region": "Region",
+    "state": "State",
+    "province": "Province",
+    "county": "County"
+  },
   "errors": {
     "file_too_large": "📦 Oops! This file is too large.\n\n**What to do:** Please use a file under 500MB, or split your data into smaller time periods.",
     "invalid_format": "❌ Hmm, this file format isn't supported.\n\n**What we need:** Excel files (.xlsx or .xls)\n\n**What to do:** Save your file as Excel format and try again.",

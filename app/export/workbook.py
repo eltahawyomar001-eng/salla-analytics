@@ -724,6 +724,7 @@ class ExcelReportGenerator:
         metadata = [
             ('Report Generated', datetime.now().strftime('%Y-%m-%d %H:%M:%S')),
             ('Application', f'{APP_NAME} v{APP_VERSION}'),
+            ('Author', 'Omar Rageh'),
             ('Language', self.language.upper()),
             ('Total Rows Analyzed', len(df_clean)),
             ('Total Columns', len(df_clean.columns)),

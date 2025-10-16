@@ -6,7 +6,7 @@ from pathlib import Path
 
 # Application Settings
 APP_NAME = "Advanced Analysis for Salla"
-APP_VERSION = "1.0.0"
+APP_VERSION = "2.0.0"
 DEFAULT_CURRENCY = None  # Currency will be detected from data
 DEFAULT_LANGUAGE = "en"
 SUPPORTED_LANGUAGES = ["en", "ar"]
