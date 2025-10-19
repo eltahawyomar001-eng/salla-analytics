@@ -17,6 +17,66 @@ except ImportError:
     RTL_AVAILABLE = False
     logger.warning("arabic-reshaper and python-bidi not available. Arabic RTL support disabled.")
 
+
+# ============================================================================
+# Page Protection & Error Handling
+# ============================================================================
+
+def require_data(func: Callable) -> Callable:
+    """Decorator to ensure data is loaded before rendering page.
+    
+    Shows friendly empty state if no data is loaded, preventing errors.
+    
+    Usage:
+        @require_data
+        def render_my_page():
+            # Page code here
+    """
+    def wrapper(*args, **kwargs):
+        if not st.session_state.get('data_loaded', False):
+            # Show friendly empty state
+            language = st.session_state.get('language', 'en')
+            
+            st.markdown("""
+            <div style="text-align: center; padding: 4rem 2rem; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+                        border-radius: 12px; color: white;">
+                <div style="font-size: 4rem; margin-bottom: 1rem;">📤</div>
+                <h2 style="color: white; margin: 0;">No Data Loaded Yet</h2>
+                <p style="font-size: 1.1rem; margin-top: 1rem; opacity: 0.9;">
+                    Please upload your Salla data first to see insights
+                </p>
+            </div>
+            """, unsafe_allow_html=True)
+            
+            st.markdown("<br>", unsafe_allow_html=True)
+            
+            # Action button
+            col1, col2, col3 = st.columns([1, 2, 1])
+            with col2:
+                if st.button("📤 Go to Upload Page", use_container_width=True, type="primary"):
+                    st.session_state.page_selector = 'upload'
+                    st.rerun()
+            
+            # Quick instructions
+            st.markdown("---")
+            st.markdown("""
+            ### 🚀 Quick Start Guide
+            
+            1. **📥 Export Data** - Download your order data from Salla as Excel
+            2. **📤 Upload** - Upload the Excel file on the Upload page
+            3. **🔗 Map Columns** - Confirm column mappings (auto-detected)
+            4. **📊 Analyze** - Explore insights, segments, and trends
+            """)
+            
+            return None
+        return func(*args, **kwargs)
+    return wrapper
+
+
+# ============================================================================
+# Translation & Localization
+# ============================================================================
+
 def load_translations(language: str = 'en') -> Dict[str, Any]:
     """Load translation file for the specified language.
     
@@ -377,12 +437,12 @@ def show_welcome_banner(language: str = 'en'):
         </div>
         """, unsafe_allow_html=True)
     
-    # Dismiss button
+    # Dismiss button (no rerun - banner disappears on next natural render)
     col1, col2, col3 = st.columns([2, 1, 2])
     with col2:
-        if st.button("✓ Got it!" if language == 'en' else "✓ فهمت!", use_container_width=True):
+        if st.button("✓ Got it!" if language == 'en' else "✓ فهمت!", use_container_width=True, key="dismiss_welcome"):
             st.session_state.welcome_seen = True
-            st.rerun()
+            # No rerun needed - avoids conflicts with file upload
 
 
 # ============================================================================

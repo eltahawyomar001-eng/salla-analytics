@@ -226,62 +226,108 @@ def render_upload_page():
     )
 
     if uploaded_file is not None:
+        # Validate file format
+        if not uploaded_file.name.lower().endswith(('.xlsx', '.xls')):
+            st.error("❌ Invalid file format. Please upload an Excel file (.xlsx or .xls)")
+            st.info("💡 **Tip**: Export your Salla data as Excel, not CSV or PDF")
+            return
+        
+        # Validate file size (max 50MB)
         try:
-            # Show upload success banner
-            show_info_banner(
-                t['upload']['file_uploaded'].format(filename=uploaded_file.name),
-                banner_type='success',
-                language=language
-            )
-            
+            file_size_mb = len(uploaded_file.getvalue()) / (1024 * 1024)
+            if file_size_mb > 50:
+                st.error(f"❌ File too large ({file_size_mb:.1f} MB). Maximum size is 50 MB")
+                st.info("💡 **Tip**: Try filtering to a shorter date range in Salla before exporting")
+                return
+            elif file_size_mb > 10:
+                st.warning(f"⚠️ Large file detected ({file_size_mb:.1f} MB). This may take a minute to process.")
+        except Exception as e:
+            logger.error(f"File size check failed: {e}", exc_info=True)
+            # Continue anyway - not critical
+        
+        # Show upload success banner
+        show_info_banner(
+            t['upload']['file_uploaded'].format(filename=uploaded_file.name),
+            banner_type='success',
+            language=language
+        )
+        
+        try:
             # Step 1: Read file (only once per file)
             if 'df_raw' not in st.session_state or st.session_state.get('current_file') != uploaded_file.name:
                 with st.spinner(t['upload']['reading_file']):
-                    reader = XLSXReader()
-                    # Save uploaded file temporarily
-                    import tempfile
-                    import os
-                    
-                    tmp_path = None
                     try:
-                        with tempfile.NamedTemporaryFile(delete=False, suffix='.xlsx') as tmp_file:
-                            tmp_file.write(uploaded_file.getvalue())
-                            tmp_path = tmp_file.name
+                        reader = XLSXReader()
+                        # Save uploaded file temporarily
+                        import tempfile
+                        import os
                         
-                        df_raw, metadata = reader.read_excel_file(tmp_path)
-                        
-                        # Clean concatenated text columns (fix data corruption issues)
-                        df_raw = _clean_concatenated_columns(df_raw)
-                        
-                        # CRITICAL: Clear all old state when new file is uploaded
-                        st.session_state.df_raw = df_raw
-                        st.session_state.metadata = metadata
-                        st.session_state.current_file = uploaded_file.name
-                        
-                        # Clear old mappings and analysis results
-                        if 'mappings' in st.session_state:
-                            del st.session_state.mappings
-                        if 'mapping_file' in st.session_state:
-                            del st.session_state.mapping_file
-                        if 'df_clean' in st.session_state:
-                            del st.session_state.df_clean
-                        if 'analysis_results' in st.session_state:
-                            st.session_state.analysis_results = {}
-                        # Clear data_loaded flag when new file uploaded
-                        st.session_state.data_loaded = False
-                        
-                        st.success(t['upload']['file_read_success'].format(
-                            rows=format_number(len(df_raw), language, decimals=0),
-                            columns=format_number(len(df_raw.columns), language, decimals=0)
-                        ))
-                    finally:
-                        # Clean up temp file
-                        if tmp_path and os.path.exists(tmp_path):
-                            try:
-                                os.unlink(tmp_path)
-                            except (PermissionError, OSError):
-                                # File might still be in use, try again later
-                                pass
+                        tmp_path = None
+                        try:
+                            with tempfile.NamedTemporaryFile(delete=False, suffix='.xlsx') as tmp_file:
+                                tmp_file.write(uploaded_file.getvalue())
+                                tmp_path = tmp_file.name
+                            
+                            df_raw, metadata = reader.read_excel_file(tmp_path)
+                            
+                            # Validate file is not empty
+                            if len(df_raw) == 0:
+                                st.error("❌ The uploaded file contains no data")
+                                st.info("💡 **Tip**: Make sure your Salla export includes order data")
+                                return
+                            
+                            if len(df_raw.columns) == 0:
+                                st.error("❌ The uploaded file has no columns")
+                                st.info("💡 **Tip**: The file may be corrupted. Try re-exporting from Salla")
+                                return
+                            
+                            # Clean concatenated text columns (fix data corruption issues)
+                            df_raw = _clean_concatenated_columns(df_raw)
+                            
+                            # CRITICAL: Clear all old state when new file is uploaded
+                            st.session_state.df_raw = df_raw
+                            st.session_state.metadata = metadata
+                            st.session_state.current_file = uploaded_file.name
+                            
+                            # Clear old mappings and analysis results
+                            if 'mappings' in st.session_state:
+                                del st.session_state.mappings
+                            if 'mapping_file' in st.session_state:
+                                del st.session_state.mapping_file
+                            if 'df_clean' in st.session_state:
+                                del st.session_state.df_clean
+                            if 'analysis_results' in st.session_state:
+                                st.session_state.analysis_results = {}
+                            # Clear data_loaded flag when new file uploaded
+                            st.session_state.data_loaded = False
+                            
+                            st.success(t['upload']['file_read_success'].format(
+                                rows=format_number(len(df_raw), language, decimals=0),
+                                columns=format_number(len(df_raw.columns), language, decimals=0)
+                            ))
+                            
+                        finally:
+                            # Clean up temp file
+                            if tmp_path and os.path.exists(tmp_path):
+                                try:
+                                    os.unlink(tmp_path)
+                                except (PermissionError, OSError):
+                                    # File might still be in use, try again later
+                                    pass
+                    
+                    except pd.errors.EmptyDataError:
+                        st.error("❌ The uploaded Excel file is empty")
+                        st.info("💡 **Tip**: Make sure to select the correct sheet with order data")
+                        return
+                    except pd.errors.ParserError:
+                        st.error("❌ Could not parse the Excel file. It may be corrupted.")
+                        st.info("💡 **Try**: Opening the file in Excel and saving it again")
+                        return
+                    except Exception as e:
+                        logger.error(f"File reading failed: {e}", exc_info=True)
+                        st.error(f"❌ Error reading file: {str(e)}")
+                        st.info("💡 **Try**: Re-exporting the file from Salla or checking if it's corrupted")
+                        return
             else:
                 # Use cached dataframe
                 df_raw = st.session_state.df_raw
@@ -412,6 +458,42 @@ def render_upload_page():
             st.session_state.current_file = current_file
             
             aggregation_approved_key = f"agg_approved_{current_file}"
+            
+            # Validate mappings before showing process button
+            required_fields = ['order_id', 'order_date', 'customer_id', 'order_total']
+            missing_required = [f for f in required_fields if not st.session_state.mappings.get(f)]
+            
+            if missing_required:
+                st.error(f"❌ Missing required fields: {', '.join(missing_required)}")
+                st.info("💡 **Tip**: These fields are essential for analysis. Please map them above.")
+                
+                # Show which fields are required
+                with st.expander("📋 Required vs Optional Fields", expanded=True):
+                    st.markdown("""
+                    **Required Fields** (must be mapped):
+                    - ✅ Order ID - Unique identifier for each order
+                    - ✅ Order Date - When the order was placed
+                    - ✅ Customer ID - Identifier for the customer
+                    - ✅ Order Total - Total amount of the order
+                    
+                    **Optional Fields** (improve analysis):
+                    - Product Name - Enables product analysis
+                    - Quantity - For inventory insights
+                    - Discounts - For promotion analysis
+                    - Shipping & Taxes - For detailed financials
+                    """)
+                return
+            
+            # Show preview of mapped data
+            with st.expander("🔍 Preview Mapped Data (First 5 Rows)", expanded=False):
+                rename_dict = {v: k for k, v in st.session_state.mappings.items() if v}
+                preview_df = st.session_state.df_raw.rename(columns=rename_dict)
+                
+                # Show only mapped columns
+                mapped_cols = [k for k in required_fields if k in preview_df.columns]
+                if mapped_cols:
+                    st.dataframe(preview_df[mapped_cols].head(5), use_container_width=True)
+                    st.caption(f"✅ {len(preview_df):,} rows ready to process")
             
             # Check if we need to show aggregation approval UI first
             # Quick pre-check: does data need aggregation and is it not yet approved?
