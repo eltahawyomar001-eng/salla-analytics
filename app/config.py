@@ -11,6 +11,11 @@ DEFAULT_CURRENCY = None  # Currency will be detected from data
 DEFAULT_LANGUAGE = "en"
 SUPPORTED_LANGUAGES = ["en", "ar"]
 
+# Feature Flags
+USE_DYNAMIC_SCHEMA = True  # Enable dynamic schema registry (new!)
+ENABLE_CUSTOM_FIELDS = True  # Allow custom field detection
+ENABLE_PLATFORM_AUTO_DETECTION = True  # Auto-detect platform from columns
+
 # File Processing
 MAX_FILE_SIZE_MB = 500
 CHUNK_SIZE_ROWS = 10000

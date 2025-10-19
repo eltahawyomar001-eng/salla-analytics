@@ -1,0 +1,607 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "version": "1.0.0",
+  "description": "Dynamic schema registry for multi-platform e-commerce data mapping",
+  
+  "platforms": {
+    "salla": {
+      "name": "Salla (Saudi Arabia)",
+      "language": "ar",
+      "currency": "SAR",
+      "date_format": "%Y-%m-%d",
+      "timezone": "Asia/Riyadh",
+      "common_patterns": {
+        "order_id_prefixes": ["ORD-", "S-", "#"],
+        "column_language": "arabic",
+        "skip_patterns": ["Unnamed:", "Total", "المجموع", "Notes"]
+      },
+      "core_fields": {
+        "order_id": {
+          "required": true,
+          "type": "string",
+          "validators": ["non_empty", "unique"],
+          "synonyms": [
+            "رقم الطلب",
+            "معرف الطلب",
+            "Order ID",
+            "Order Number",
+            "Reference Number",
+            "Order Reference"
+          ],
+          "auto_detect_patterns": [
+            "^order.*id",
+            "^order.*number",
+            "^رقم.*طلب",
+            "^معرف.*طلب",
+            "reference"
+          ],
+          "sample_values": ["ORD-123456", "12345", "S-789"],
+          "description": "Unique identifier for each order",
+          "fallback_generation": "auto_increment"
+        },
+        "order_date": {
+          "required": true,
+          "type": "datetime",
+          "validators": ["valid_date", "not_future"],
+          "synonyms": [
+            "تاريخ الطلب",
+            "تاريخ الإنشاء",
+            "Order Date",
+            "Created At",
+            "Date Created",
+            "Order Time",
+            "Purchase Date"
+          ],
+          "auto_detect_patterns": [
+            "date",
+            "تاريخ",
+            "created",
+            "time",
+            "وقت"
+          ],
+          "accepted_formats": [
+            "%Y-%m-%d",
+            "%d/%m/%Y",
+            "%Y-%m-%d %H:%M:%S",
+            "%d-%m-%Y",
+            "%m/%d/%Y"
+          ],
+          "description": "Date and time when order was placed",
+          "fallback_generation": "use_current_date"
+        },
+        "order_status": {
+          "required": false,
+          "type": "string",
+          "validators": ["allowed_values"],
+          "allowed_values": [
+            "pending", "معلق",
+            "processing", "قيد المعالجة",
+            "completed", "مكتمل",
+            "cancelled", "ملغي",
+            "refunded", "مسترجع",
+            "on-hold", "قيد الانتظار"
+          ],
+          "synonyms": [
+            "حالة الطلب",
+            "Order Status",
+            "Status",
+            "الحالة",
+            "Order State"
+          ],
+          "auto_detect_patterns": [
+            "status",
+            "حالة",
+            "state"
+          ],
+          "description": "Current status of the order"
+        },
+        "currency": {
+          "required": false,
+          "type": "string",
+          "validators": ["iso_currency_code"],
+          "synonyms": [
+            "العملة",
+            "Currency",
+            "Currency Code",
+            "رمز العملة"
+          ],
+          "auto_detect_patterns": [
+            "currency",
+            "عملة"
+          ],
+          "default_value": "SAR",
+          "description": "ISO currency code (e.g., SAR, USD, EUR)"
+        },
+        "order_total": {
+          "required": true,
+          "type": "float",
+          "validators": ["positive_number", "reasonable_range"],
+          "synonyms": [
+            "إجمالي الطلب",
+            "المبلغ الإجمالي",
+            "Order Total",
+            "Total Amount",
+            "Grand Total",
+            "Total",
+            "المجموع الكلي"
+          ],
+          "auto_detect_patterns": [
+            "total",
+            "amount",
+            "إجمالي",
+            "مجموع",
+            "مبلغ"
+          ],
+          "description": "Total monetary value of the order",
+          "fallback_generation": "sum_line_items"
+        },
+        "customer_id": {
+          "required": true,
+          "type": "string",
+          "validators": ["non_empty"],
+          "synonyms": [
+            "معرف العميل",
+            "رقم العميل",
+            "Customer ID",
+            "Customer Number",
+            "Client ID",
+            "رقم الجوال",
+            "الجوال",
+            "Mobile",
+            "اسم العميل",
+            "Customer Name"
+          ],
+          "auto_detect_patterns": [
+            "customer.*id",
+            "client.*id",
+            "معرف.*عميل",
+            "رقم.*عميل",
+            "جوال",
+            "mobile",
+            "اسم.*عميل",
+            "customer.*name"
+          ],
+          "description": "Unique identifier for the customer (can be ID, phone, or name)",
+          "fallback_generation": "use_email_or_phone_or_name_hash"
+        },
+        "customer_name": {
+          "required": false,
+          "type": "string",
+          "validators": ["text_only"],
+          "synonyms": [
+            "اسم العميل",
+            "Customer Name",
+            "Client Name",
+            "Name",
+            "الاسم"
+          ],
+          "auto_detect_patterns": [
+            "name",
+            "اسم",
+            "customer.*name",
+            "client.*name"
+          ],
+          "description": "Full name of the customer"
+        },
+        "customer_email": {
+          "required": false,
+          "type": "string",
+          "validators": ["email_format"],
+          "synonyms": [
+            "البريد الإلكتروني",
+            "Email",
+            "Customer Email",
+            "E-mail",
+            "بريد إلكتروني"
+          ],
+          "auto_detect_patterns": [
+            "email",
+            "e-mail",
+            "بريد",
+            "mail"
+          ],
+          "description": "Email address of the customer"
+        },
+        "customer_phone": {
+          "required": false,
+          "type": "string",
+          "validators": ["phone_format"],
+          "synonyms": [
+            "رقم الهاتف",
+            "الجوال",
+            "Phone",
+            "Mobile",
+            "Customer Phone",
+            "هاتف"
+          ],
+          "auto_detect_patterns": [
+            "phone",
+            "mobile",
+            "هاتف",
+            "جوال",
+            "tel"
+          ],
+          "description": "Phone number of the customer"
+        },
+        "line_item_id": {
+          "required": false,
+          "type": "string",
+          "validators": [],
+          "synonyms": [
+            "معرف المنتج في الطلب",
+            "Line Item ID",
+            "Item ID",
+            "Product Line ID"
+          ],
+          "auto_detect_patterns": [
+            "line.*item",
+            "item.*id"
+          ],
+          "description": "Unique identifier for each line item in order"
+        },
+        "product_id": {
+          "required": false,
+          "type": "string",
+          "validators": [],
+          "synonyms": [
+            "معرف المنتج",
+            "رقم المنتج",
+            "Product ID",
+            "SKU ID",
+            "Item ID"
+          ],
+          "auto_detect_patterns": [
+            "product.*id",
+            "item.*id",
+            "معرف.*منتج"
+          ],
+          "description": "Unique identifier for the product"
+        },
+        "product_name": {
+          "required": false,
+          "type": "string",
+          "validators": ["text_only"],
+          "synonyms": [
+            "اسم المنتج",
+            "المنتج",
+            "Product Name",
+            "Product Title",
+            "Item Name"
+          ],
+          "auto_detect_patterns": [
+            "product.*name",
+            "product.*title",
+            "item.*name",
+            "اسم.*منتج"
+          ],
+          "description": "Name or title of the product"
+        },
+        "sku": {
+          "required": false,
+          "type": "string",
+          "validators": [],
+          "synonyms": [
+            "رمز المنتج",
+            "SKU",
+            "Product Code",
+            "Item Code",
+            "Stock Keeping Unit"
+          ],
+          "auto_detect_patterns": [
+            "^sku$",
+            "code",
+            "رمز"
+          ],
+          "description": "Stock Keeping Unit identifier"
+        },
+        "quantity": {
+          "required": false,
+          "type": "float",
+          "validators": ["positive_number", "integer_preferred"],
+          "synonyms": [
+            "الكمية",
+            "Quantity",
+            "Qty",
+            "Amount",
+            "العدد"
+          ],
+          "auto_detect_patterns": [
+            "quantity",
+            "qty",
+            "كمية",
+            "عدد"
+          ],
+          "description": "Number of units ordered",
+          "default_value": 1
+        },
+        "item_total": {
+          "required": false,
+          "type": "float",
+          "validators": ["positive_number"],
+          "synonyms": [
+            "إجمالي المنتج",
+            "Item Total",
+            "Line Total",
+            "Product Total",
+            "مجموع المنتج"
+          ],
+          "auto_detect_patterns": [
+            "item.*total",
+            "line.*total",
+            "product.*total"
+          ],
+          "description": "Total price for this line item"
+        },
+        "discounts": {
+          "required": false,
+          "type": "float",
+          "validators": ["non_negative"],
+          "synonyms": [
+            "الخصومات",
+            "التخفيضات",
+            "Discount",
+            "Discounts",
+            "Discount Amount",
+            "خصم"
+          ],
+          "auto_detect_patterns": [
+            "discount",
+            "خصم",
+            "تخفيض"
+          ],
+          "description": "Total discount applied to order"
+        },
+        "shipping": {
+          "required": false,
+          "type": "float",
+          "validators": ["non_negative"],
+          "synonyms": [
+            "الشحن",
+            "تكلفة الشحن",
+            "Shipping",
+            "Shipping Cost",
+            "Delivery Fee",
+            "رسوم التوصيل"
+          ],
+          "auto_detect_patterns": [
+            "shipping",
+            "delivery",
+            "شحن",
+            "توصيل"
+          ],
+          "description": "Shipping/delivery cost"
+        },
+        "taxes": {
+          "required": false,
+          "type": "float",
+          "validators": ["non_negative"],
+          "synonyms": [
+            "الضرائب",
+            "ضريبة القيمة المضافة",
+            "Tax",
+            "Taxes",
+            "VAT",
+            "ضريبة"
+          ],
+          "auto_detect_patterns": [
+            "tax",
+            "vat",
+            "ضريبة"
+          ],
+          "description": "Tax amount (VAT, sales tax, etc.)"
+        },
+        "refund_amount": {
+          "required": false,
+          "type": "float",
+          "validators": ["non_negative"],
+          "synonyms": [
+            "مبلغ الاسترجاع",
+            "Refund",
+            "Refund Amount",
+            "Return Amount",
+            "استرجاع"
+          ],
+          "auto_detect_patterns": [
+            "refund",
+            "return.*amount",
+            "استرجاع"
+          ],
+          "description": "Amount refunded if applicable"
+        },
+        "fulfillment_status": {
+          "required": false,
+          "type": "string",
+          "validators": [],
+          "synonyms": [
+            "حالة التنفيذ",
+            "Fulfillment Status",
+            "Delivery Status",
+            "حالة التوصيل"
+          ],
+          "auto_detect_patterns": [
+            "fulfillment",
+            "delivery.*status"
+          ],
+          "description": "Order fulfillment/delivery status"
+        },
+        "payment_status": {
+          "required": false,
+          "type": "string",
+          "validators": [],
+          "synonyms": [
+            "حالة الدفع",
+            "Payment Status",
+            "Payment State",
+            "حالة السداد"
+          ],
+          "auto_detect_patterns": [
+            "payment.*status",
+            "paid"
+          ],
+          "description": "Payment completion status"
+        }
+      }
+    },
+    
+    "shopify": {
+      "name": "Shopify",
+      "language": "en",
+      "currency": "USD",
+      "date_format": "%Y-%m-%d %H:%M:%S",
+      "timezone": "UTC",
+      "common_patterns": {
+        "order_id_prefixes": ["#"],
+        "column_language": "english",
+        "skip_patterns": ["Lineitem", "Billing", "Shipping"]
+      },
+      "core_fields": {
+        "order_id": {
+          "required": true,
+          "type": "string",
+          "synonyms": ["Name", "Order", "#", "Order ID"],
+          "auto_detect_patterns": ["^#\\d+", "^order", "^name$"]
+        },
+        "order_date": {
+          "required": true,
+          "type": "datetime",
+          "synonyms": ["Created at", "Date", "Order Date"],
+          "accepted_formats": ["%Y-%m-%d %H:%M:%S", "%Y-%m-%d"]
+        },
+        "order_total": {
+          "required": true,
+          "type": "float",
+          "synonyms": ["Total", "Order Total", "Grand Total"]
+        },
+        "customer_id": {
+          "required": true,
+          "type": "string",
+          "synonyms": ["Customer ID", "Email"]
+        },
+        "customer_email": {
+          "required": false,
+          "type": "string",
+          "synonyms": ["Email", "Customer Email"]
+        }
+      }
+    },
+    
+    "woocommerce": {
+      "name": "WooCommerce",
+      "language": "en",
+      "currency": "USD",
+      "date_format": "%Y-%m-%d",
+      "timezone": "UTC",
+      "common_patterns": {
+        "order_id_prefixes": [""],
+        "column_language": "english",
+        "skip_patterns": []
+      },
+      "core_fields": {
+        "order_id": {
+          "required": true,
+          "type": "string",
+          "synonyms": ["Order ID", "Order Number", "ID"],
+          "auto_detect_patterns": ["^order.*id", "^id$"]
+        },
+        "order_date": {
+          "required": true,
+          "type": "datetime",
+          "synonyms": ["Order Date", "Date Created", "Date"],
+          "accepted_formats": ["%Y-%m-%d", "%Y-%m-%d %H:%M:%S"]
+        },
+        "order_status": {
+          "required": false,
+          "type": "string",
+          "synonyms": ["Status", "Order Status"]
+        },
+        "order_total": {
+          "required": true,
+          "type": "float",
+          "synonyms": ["Order Total", "Total", "Order Value"]
+        },
+        "customer_id": {
+          "required": true,
+          "type": "string",
+          "synonyms": ["Customer ID", "User ID"]
+        }
+      }
+    }
+  },
+  
+  "custom_fields": {
+    "allow_detection": true,
+    "max_custom_fields": 100,
+    "categories": ["marketing", "logistics", "inventory", "custom", "analytics"],
+    "auto_suggest_types": true,
+    "common_custom_fields": {
+      "gift_message": {
+        "type": "string",
+        "category": "custom",
+        "description": "Gift message from customer"
+      },
+      "loyalty_points": {
+        "type": "float",
+        "category": "marketing",
+        "description": "Loyalty points earned/redeemed"
+      },
+      "utm_source": {
+        "type": "string",
+        "category": "marketing",
+        "description": "Marketing campaign source"
+      },
+      "warehouse": {
+        "type": "string",
+        "category": "logistics",
+        "description": "Fulfillment warehouse location"
+      }
+    }
+  },
+  
+  "field_types": {
+    "string": {
+      "validators": ["text_only", "max_length", "non_empty"],
+      "default_max_length": 255
+    },
+    "float": {
+      "validators": ["numeric", "positive_number", "non_negative", "reasonable_range"],
+      "default_range": [0, 1000000]
+    },
+    "datetime": {
+      "validators": ["valid_date", "not_future", "reasonable_date_range"],
+      "default_range": ["2000-01-01", "2050-12-31"]
+    },
+    "boolean": {
+      "validators": ["true_false_values"],
+      "accepted_values": [true, false, "true", "false", "yes", "no", "1", "0"]
+    }
+  },
+  
+  "validation_rules": {
+    "non_empty": {
+      "description": "Value must not be empty or null",
+      "error_message": "This field cannot be empty"
+    },
+    "unique": {
+      "description": "Values must be unique across dataset",
+      "error_message": "Duplicate values found"
+    },
+    "email_format": {
+      "description": "Must be valid email format",
+      "pattern": "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$",
+      "error_message": "Invalid email format"
+    },
+    "phone_format": {
+      "description": "Must be valid phone number",
+      "pattern": "^[+]?[0-9]{8,15}$",
+      "error_message": "Invalid phone number format"
+    },
+    "positive_number": {
+      "description": "Must be greater than zero",
+      "error_message": "Value must be positive"
+    },
+    "non_negative": {
+      "description": "Must be zero or greater",
+      "error_message": "Value cannot be negative"
+    }
+  }
+}

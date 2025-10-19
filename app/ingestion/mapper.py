@@ -14,17 +14,44 @@ try:
 except ImportError:
     FUZZYWUZZY_AVAILABLE = False
 
-from ..config import CANONICAL_FIELDS, SCHEMAS_DIR, QUALITY_THRESHOLDS
+from ..config import CANONICAL_FIELDS, SCHEMAS_DIR, QUALITY_THRESHOLDS, USE_DYNAMIC_SCHEMA
+
+# Import new schema registry if available
+if USE_DYNAMIC_SCHEMA:
+    try:
+        from .schema_registry import SchemaRegistry
+        SCHEMA_REGISTRY_AVAILABLE = True
+    except ImportError:
+        SCHEMA_REGISTRY_AVAILABLE = False
+        logger = logging.getLogger(__name__)
+        logger.warning("SchemaRegistry not available, falling back to static CANONICAL_FIELDS")
+else:
+    SCHEMA_REGISTRY_AVAILABLE = False
 
 logger = logging.getLogger(__name__)
 
 class ColumnMapper:
-    """Handles automatic column detection and mapping."""
+    """Handles automatic column detection and mapping with dynamic schema support."""
     
-    def __init__(self):
+    def __init__(self, platform: str = "salla"):
+        """
+        Initialize column mapper.
+        
+        Args:
+            platform: Platform name (salla, shopify, woocommerce, auto)
+        """
+        self.platform = platform
         self.synonyms = self._load_synonyms()
         self.canonical_schema = self._load_canonical_schema()
         self.mapping_cache: Dict[str, Dict[str, str]] = {}
+        
+        # Initialize schema registry if enabled
+        if USE_DYNAMIC_SCHEMA and SCHEMA_REGISTRY_AVAILABLE:
+            self.schema_registry = SchemaRegistry()
+            self.use_dynamic = True
+        else:
+            self.schema_registry = None
+            self.use_dynamic = False
         
     def _load_synonyms(self) -> Dict[str, Any]:
         """Load header synonyms from YAML file."""
@@ -114,12 +141,94 @@ class ColumnMapper:
         """
         Automatically detect column mappings.
         
+        Uses dynamic schema registry if enabled, otherwise falls back to
+        static CANONICAL_FIELDS for backward compatibility.
+        
         Args:
             df: DataFrame to analyze
             confidence_threshold: Minimum confidence for auto-detection
             
         Returns:
             Tuple of (mappings_dict, confidence_scores)
+        """
+        # Use dynamic schema if available
+        if self.use_dynamic and self.schema_registry:
+            return self._auto_detect_dynamic(df, confidence_threshold)
+        else:
+            return self._auto_detect_static(df, confidence_threshold)
+    
+    def _auto_detect_dynamic(
+        self,
+        df: pd.DataFrame,
+        confidence_threshold: Optional[float] = None
+    ) -> Tuple[Dict[str, str], Dict[str, float]]:
+        """
+        Auto-detect columns using dynamic schema registry.
+        
+        This is the new implementation that supports multiple platforms
+        and custom fields.
+        """
+        if confidence_threshold is None:
+            confidence_threshold = QUALITY_THRESHOLDS['mapping_confidence_threshold']
+        
+        mappings = {}
+        confidence_scores = {}
+        
+        source_columns = list(df.columns)
+        
+        # Auto-detect platform if set to "auto"
+        if self.platform == "auto":
+            detected_platform = self.schema_registry.detect_platform(source_columns)
+            self.platform = detected_platform
+            logger.info(f"Auto-detected platform: {detected_platform}")
+        
+        # Get all fields for this platform
+        all_fields = self.schema_registry.get_all_fields(self.platform)
+        
+        for canonical_field in all_fields:
+            best_match = None
+            best_score = 0.0
+            
+            # Get synonyms from schema registry
+            field_synonyms = self.schema_registry.get_field_synonyms(
+                canonical_field, 
+                self.platform
+            )
+            
+            # Add canonical field name itself
+            if canonical_field not in field_synonyms:
+                field_synonyms.append(canonical_field)
+            
+            # Test each source column
+            for source_col in source_columns:
+                score = self.calculate_match_score(source_col, field_synonyms)
+                
+                if score > best_score:
+                    best_score = score
+                    best_match = source_col
+            
+            # Store if above threshold
+            threshold = confidence_threshold or QUALITY_THRESHOLDS['mapping_confidence_threshold']
+            if best_match and best_score >= threshold:
+                mappings[canonical_field] = best_match
+                confidence_scores[canonical_field] = best_score
+            else:
+                confidence_scores[canonical_field] = best_score
+        
+        # Ensure no duplicate mappings
+        mappings = self._resolve_mapping_conflicts(mappings, confidence_scores)
+        
+        return mappings, confidence_scores
+    
+    def _auto_detect_static(
+        self,
+        df: pd.DataFrame,
+        confidence_threshold: Optional[float] = None
+    ) -> Tuple[Dict[str, str], Dict[str, float]]:
+        """
+        Auto-detect columns using static CANONICAL_FIELDS (legacy method).
+        
+        This is the original implementation for backward compatibility.
         """
         if confidence_threshold is None:
             confidence_threshold = QUALITY_THRESHOLDS['mapping_confidence_threshold']
