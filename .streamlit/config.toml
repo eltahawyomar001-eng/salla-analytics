@@ -12,10 +12,15 @@ font = "sans serif"
 
 [server]
 maxUploadSize = 500
+# Disable CORS and XSRF for cloud deployment compatibility
 enableCORS = false
-enableXsrfProtection = true
-# Enable file watcher for hot reload
+enableXsrfProtection = false
+# Enable file watcher for hot reload (local dev only)
 fileWatcherType = "auto"
+# Headless mode for deployment
+headless = true
+# Allow connections from any host
+address = "0.0.0.0"
 
 [browser]
 gatherUsageStats = false
