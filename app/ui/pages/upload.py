@@ -31,9 +31,16 @@ def render_upload_page():
     """Render the data upload and processing page."""
     language = st.session_state.language
     t = get_translator(language)
-
-    st.title(t['navigation']['upload'])
-    st.markdown(t['upload']['description'])
+    
+    # Import modern components
+    from app.ui.components import app_header, section
+    
+    # Modern page header
+    app_header(
+        title=t['navigation']['upload'],
+        subtitle=t['upload']['description'],
+        language=language
+    )
     
     # Show welcome banner for first-time users (if not already loaded data)
     if not st.session_state.get('data_loaded', False):
@@ -58,7 +65,16 @@ def render_upload_page():
                 customers = kpis.get('customer_metrics', {}).get('total_customers', df_clean['customer_id'].nunique())
                 st.metric("Unique Customers", f"{customers:,}")
             with col3:
-                date_range = f"{df_clean['order_date'].min().strftime('%b %Y')} - {df_clean['order_date'].max().strftime('%b %Y')}"
+                # Convert dates to datetime if they're strings
+                if 'order_date' in df_clean.columns:
+                    try:
+                        min_date = pd.to_datetime(df_clean['order_date'].min())
+                        max_date = pd.to_datetime(df_clean['order_date'].max())
+                        date_range = f"{min_date.strftime('%b %Y')} - {max_date.strftime('%b %Y')}"
+                    except:
+                        date_range = "Various"
+                else:
+                    date_range = "N/A"
                 st.metric("Date Range", date_range)
             with col4:
                 currency = kpis.get('currency', '')
@@ -423,6 +439,12 @@ def process_data(df_raw: pd.DataFrame, mappings: Dict[str, str], t: Dict[str, An
         rename_dict = {v: k for k, v in mappings.items() if v}
         df_mapped = df_raw.rename(columns=rename_dict)
         
+        # Convert date columns to datetime immediately after mapping
+        if 'order_date' in df_mapped.columns:
+            df_mapped['order_date'] = pd.to_datetime(df_mapped['order_date'], errors='coerce')
+        if 'first_purchase_date' in df_mapped.columns:
+            df_mapped['first_purchase_date'] = pd.to_datetime(df_mapped['first_purchase_date'], errors='coerce')
+        
         # Debug: Show actual mapping transformation
         with st.expander("🔍 Debug: Column Mapping Applied", expanded=False):
             st.write("**Mappings Dictionary:**")
@@ -431,6 +453,8 @@ def process_data(df_raw: pd.DataFrame, mappings: Dict[str, str], t: Dict[str, An
                     st.write(f"   {original} → {canonical}")
             st.write("\n**Columns Before Mapping:**", list(df_raw.columns[:10]))
             st.write("**Columns After Mapping:**", list(df_mapped.columns[:10]))
+            if 'order_date' in df_mapped.columns:
+                st.write(f"**Order Date Type:**", df_mapped['order_date'].dtype)
         
         # Debug info
         st.info(f"📊 **Data Summary**: {len(df_raw):,} rows loaded from file → {len(df_mapped):,} rows after mapping")

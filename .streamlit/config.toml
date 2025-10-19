@@ -1,14 +1,26 @@
 [theme]
-primaryColor = "#2E8B57"
+# Modern gradient primary color (Purple)
+primaryColor = "#7C3AED"
+# Clean white background
 backgroundColor = "#FFFFFF"
-secondaryBackgroundColor = "#F0F2F6"
-textColor = "#262730"
+# Subtle gray for secondary backgrounds
+secondaryBackgroundColor = "#F9FAFB"
+# Dark text for readability
+textColor = "#111827"
+# Modern font stack with Inter as primary
 font = "sans serif"
 
 [server]
 maxUploadSize = 500
 enableCORS = false
 enableXsrfProtection = true
+# Enable file watcher for hot reload
+fileWatcherType = "auto"
 
 [browser]
 gatherUsageStats = false
+
+[client]
+# Improve performance
+toolbarMode = "minimal"
+showErrorDetails = true

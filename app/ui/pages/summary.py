@@ -229,7 +229,11 @@ def render_summary_page():
                 # Generate filename safely
                 df_clean = st.session_state.df_clean
                 if isinstance(df_clean, pd.DataFrame) and len(df_clean) > 0 and 'order_date' in df_clean.columns:
-                    date_str = df_clean['order_date'].max().strftime('%Y%m%d')
+                    try:
+                        max_date = pd.to_datetime(df_clean['order_date'].max())
+                        date_str = max_date.strftime('%Y%m%d')
+                    except:
+                        date_str = 'latest'
                 else:
                     date_str = 'latest'
                 
