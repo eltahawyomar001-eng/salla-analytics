@@ -153,8 +153,21 @@ class DataValidator:
             'order_date': 'datetime'
         }
         
+        # Text fields that should NEVER be converted to numeric
+        text_only_fields = {
+            'country', 'city', 'state', 'province', 'region',
+            'customer_name', 'customer_email', 'customer_phone',
+            'product_name', 'product_sku', 'product_category',
+            'order_status', 'payment_method', 'shipping_method'
+        }
+        
         for field, target_type in type_conversions.items():
             if field not in df.columns:
+                continue
+            
+            # Extra safety: Skip if column name suggests it's a text field
+            if any(text_field in field.lower() for text_field in text_only_fields):
+                logger.warning(f"Skipping type conversion for '{field}' - appears to be text column")
                 continue
                 
             try:

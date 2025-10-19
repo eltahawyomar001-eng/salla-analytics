@@ -167,7 +167,6 @@ def main():
     if st.session_state.language == 'en':
         pages = {
             "upload": "📤 Upload & Map Data",
-            "salla_import": "🔌 Salla Import 🆕",
             "summary": "📊 Executive Summary ⭐",
             "insights": "💰 Financial Insights ⭐",
             "customers": "👥 Customer Segments",
@@ -179,7 +178,6 @@ def main():
     else:
         pages = {
             "upload": "📤 رفع وربط البيانات",
-            "salla_import": "🔌 استيراد سلة 🆕",
             "summary": "📊 الملخص التنفيذي ⭐",
             "insights": "💰 الرؤى المالية ⭐",
             "customers": "👥 شرائح العملاء",
@@ -202,9 +200,6 @@ def main():
     if page == "upload":
         from app.ui.pages.upload import render_upload_page
         render_upload_page()
-    elif page == "salla_import":
-        from app.ui.pages.salla_import import render_salla_import_page
-        render_salla_import_page()
     elif not st.session_state.data_loaded:
         # If user tries to access other pages without data, redirect to upload
         st.warning("⚠️ Please upload and process your data first.")

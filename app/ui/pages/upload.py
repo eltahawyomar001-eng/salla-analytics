@@ -20,6 +20,89 @@ from app.analytics.anomalies import AnomalyDetector
 
 logger = logging.getLogger(__name__)
 
+def _clean_concatenated_columns(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Clean columns that have concatenated text values due to data corruption.
+    
+    Detects columns where values appear to be the same word repeated many times
+    (e.g., "Saudi ArabiaSaudi ArabiaSaudi Arabia...") and fixes them.
+    """
+    df_clean = df.copy()
+    
+    for col in df_clean.columns:
+        if df_clean[col].dtype == 'object':  # Text columns only
+            try:
+                # Check sample of values for repetition
+                sample_values = df_clean[col].dropna().head(20)
+                needs_cleaning = False
+                
+                for idx, value in sample_values.items():
+                    if isinstance(value, str) and len(value) > 20:
+                        # Quick check: does it look like concatenated text?
+                        # Method 1: Check for repeating patterns (no spaces)
+                        if ' ' not in value and len(value) > 30:
+                            # Might be "KuwaitKuwaitKuwait"
+                            # Check if first 10 chars repeat
+                            pattern = value[:10]
+                            if value.count(pattern) >= 2:
+                                needs_cleaning = True
+                                break
+                        
+                        # Method 2: Check for repeating word patterns (with spaces)
+                        words = value.split()
+                        if len(words) >= 4:
+                            # Count word frequencies in first 20 words
+                            word_sample = words[:20]
+                            from collections import Counter
+                            word_counts = Counter(word_sample)
+                            
+                            # If any word appears more than 40% of the time, likely repetition
+                            most_common_count = word_counts.most_common(1)[0][1] if word_counts else 0
+                            if most_common_count > len(word_sample) * 0.4:
+                                needs_cleaning = True
+                                break
+                
+                if needs_cleaning:
+                    logger.warning(f"Column '{col}' appears to have concatenated values. Cleaning...")
+                    
+                    # Fix the entire column by taking only first occurrence
+                    df_clean[col] = df_clean[col].apply(
+                        lambda x: _extract_first_value(x) if isinstance(x, str) and len(x) > 20 else x
+                    )
+                    
+            except Exception as e:
+                logger.debug(f"Error checking column '{col}': {e}")
+                continue
+    
+    return df_clean
+
+def _extract_first_value(text: str) -> str:
+    """Extract the first meaningful value from concatenated text."""
+    if not isinstance(text, str) or len(text) < 20:
+        return text
+    
+    # Strategy: Find the shortest repeating substring
+    # For "KuwaitKuwaitKuwait" -> "Kuwait"
+    # For "Saudi ArabiaSaudi Arabia" -> "Saudi Arabia"
+    
+    text_len = len(text)
+    
+    # Try different pattern lengths from small to large
+    for pattern_len in range(3, text_len // 2 + 1):
+        pattern = text[:pattern_len]
+        
+        # Check if text is made of repetitions of this pattern
+        repetitions = text_len // pattern_len
+        reconstructed = pattern * repetitions
+        
+        # If the reconstructed text matches the beginning closely
+        if text.startswith(reconstructed[:len(text) - pattern_len]):
+            # Found the repeating unit
+            return pattern.strip()
+    
+    # No repetition found - return original
+    return text
+
 def _update_mapping(field: str, value: str | None):
     """Update mapping in session state when selectbox changes."""
     if value:
@@ -166,6 +249,9 @@ def render_upload_page():
                             tmp_path = tmp_file.name
                         
                         df_raw, metadata = reader.read_excel_file(tmp_path)
+                        
+                        # Clean concatenated text columns (fix data corruption issues)
+                        df_raw = _clean_concatenated_columns(df_raw)
                         
                         # CRITICAL: Clear all old state when new file is uploaded
                         st.session_state.df_raw = df_raw
@@ -726,13 +812,35 @@ def run_analysis(df: pd.DataFrame, t: Dict[str, Any], language: str):
                 currency = st.session_state.currency_info.get('default_currency')
             logger.info(f"💰 Using currency for KPIs: {currency}")
             
+            # Clean dataframe before KPI calculation
+            df_for_kpis = df.copy()
+            
+            # Ensure numeric columns are actually numeric
+            numeric_cols = ['order_total', 'quantity', 'shipping', 'taxes', 'refund_amount']
+            for col in numeric_cols:
+                if col in df_for_kpis.columns:
+                    df_for_kpis[col] = pd.to_numeric(df_for_kpis[col], errors='coerce')
+            
+            # Remove completely invalid rows
+            df_for_kpis = df_for_kpis[df_for_kpis['order_total'].notna()]
+            
+            logger.info(f"📊 Calculating KPIs on {len(df_for_kpis)} valid orders")
+            
             kpi_calc = KPICalculator()
-            kpis = kpi_calc.calculate_all_kpis(df, currency=currency)
+            kpis = kpi_calc.calculate_all_kpis(df_for_kpis, currency=currency)
             st.session_state.analysis_results['kpis'] = kpis
             progress_bar.progress(0.2)
         except Exception as e:
             logger.error(f"KPI calculation failed: {e}", exc_info=True)
-            st.error(f"❌ KPI calculation failed: {str(e)}")
+            
+            # Show detailed error information
+            error_msg = str(e)
+            if "Could not convert" in error_msg and "to numeric" in error_msg:
+                st.error(f"❌ Data Quality Issue: Some columns contain invalid data that can't be processed as numbers.")
+                st.info("💡 **Tip**: Check that numeric columns (order total, quantity, etc.) contain only numbers, not text.")
+            else:
+                st.error(f"❌ KPI calculation failed: {str(e)}")
+            
             st.session_state.analysis_results['kpis'] = {}
             progress_bar.progress(0.2)
         
